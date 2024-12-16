@@ -15,7 +15,6 @@ private:
     string password;
     string role;  // Ensure this is a non-const string
 
-    static LinkedList<User> allUsers; // Static variable to hold all users
 
 public:
     // Constructors
@@ -45,13 +44,22 @@ public:
     // Static functions
     static void loadUsersFromFile(const string& fileName); // Load users at the start
     static void saveUsersToFile(const string& fileName);  // Save users before exiting
-    
+    // static LinkedList<User> getAllUsers();  // Display all users
 
     void displayUserDetails() const;
     void registerUser(const string& role);
 
     friend ostream& operator<<(ostream& , const User& );
     friend istream& operator>>(istream& , User& );
+
+    // overloaad <,>,== operators
+    bool operator<(const User& user) const;
+    bool operator>(const User& user) const;
+    bool operator==(const User& user) const;
+    bool operator!=(const User& user) const;
+    bool operator<=(const User& user) const;
+    bool operator>=(const User& user) const;
+    
 };
 
 // Derived Classes
@@ -62,6 +70,11 @@ public:
     Seller(const User& user);
 
     void getMenu() override;
+
+    void viewActiveAuctions();
+    void createNewAuction();
+    void viewBids();
+    void endAuction();
 };
 
 class Buyer: public User {

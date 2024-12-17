@@ -5,6 +5,10 @@
 #include <sstream>
 #include <string>
 #include "LinkedList.h"  // Assuming LinkedList is defined in this file
+#include "AvlBst.h"
+#include "Item.h"
+
+// class Item;
 
 using namespace std;
 
@@ -37,6 +41,7 @@ public:
     virtual void getMenu();
 
 
+
     static User* authenticateUser();
     static bool checkUsernameOrIdAleadyExist(const string& username, const string& id);
     // static void registerUser(const string& role);
@@ -64,6 +69,8 @@ public:
 
 // Derived Classes
 class Seller: public User {
+    AVLTree<Item> items; // AVL tree to store item ids
+
 public:
 
     //copy constructor
@@ -75,6 +82,9 @@ public:
     void createNewAuction();
     void viewBids();
     void endAuction();
+
+    void getItemsOfUser();
+    void getItemofUserRec(Node<Item>* root, int id) ; 
 };
 
 class Buyer: public User {

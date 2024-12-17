@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include "AvlBst.h"
-
 using namespace std;
 
 class Item {
@@ -18,37 +16,57 @@ private:
 
 public:
     // Constructors
-    Item();
-    Item(int id, const string& name, const string& description, double price, bool isSold);
+    Item() : sellerId(0), itemId(0), name(""), description(""), price(0.0), isSold(false) {}
+    Item(int id,int sellerId, const string& name, const string& description, double price, bool isSold)
+        : itemId(id),sellerId(sellerId), name(name), description(description), price(price), isSold(isSold) {}
 
     // Getter functions
-    int getItemId() const;
-    int getsellerId() const;
-    string getName() const;
-    string getDescription() const;
-    double getPrice() const;
-    bool getIsSold() const;
+    int getItemId() const { return itemId; }
+    int getsellerId() const { return sellerId; }
+    string getName() const { return name; }
+    string getDescription() const { return description; }
+    double getPrice() const { return price; }
+    bool getIsSold() const { return isSold; }
 
     // Setter functions
-    void setItemId(int id);
-    void setName(const string& name);
-    void setDescription(const string& description);
-    void setPrice(double price);
-    void setIsSold(bool sold);
+    void setItemId(int id) { itemId = id; }
+    void setName(const string& name) { this->name = name; }
+    void setDescription(const string& description) { this->description = description; }
+    void setPrice(double price) { this->price = price; }
+    void setIsSold(bool sold) { isSold = sold; }
 
     // Function to display item details
-    void displayItem() const;
+    void displayItem() const {
+        cout << "Item ID: " << itemId << endl;
+        cout << "Name: " << name << endl;
+        cout << "Description: " << description << endl;
+        cout << "Price: $" << price << endl;
+        cout << "Status: " << (isSold ? "Sold" : "Available") << endl;
+    }
 
     // Function to update item status as sold
-    void markAsSold();
+    void markAsSold() { isSold = true; }
 
-    //static function to display items of a seller
-    static void displayItemsOfSeller(AVLTree<Item>& items, int id);
-    static void displayItemsOfSellerRec(Node<Item>* root, int id);
+    // Overload the output operator (<<)
+    friend ostream& operator<<(ostream& os, const Item& item) {
+        os << "Item ID: " << item.itemId << "\n";
+        os << "Name: " << item.name << "\n";
+        os << "Description: " << item.description << "\n";
+        os << "Price: $" << item.price << "\n";
+        os << "Status: " << (item.isSold ? "Sold" : "Available") << "\n";
+        return os;
+    }
 
-    // Overload the input and output operators
-    friend ostream& operator<<(ostream& os, const Item& item);
-    friend istream& operator>>(istream& is, Item& item);
+    // Overload the input operator (>>)
+    friend istream& operator>>(istream& is, Item& item) {
+        is >> item.itemId;
+        is.ignore();  // Ignore the newline character
+        getline(is, item.name);
+        getline(is, item.description);
+        is >> item.price;
+        is >> item.isSold;
+        return is;
+    }
 };
 
 #endif

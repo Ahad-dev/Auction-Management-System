@@ -9,11 +9,14 @@
 #include <limits>
 
 // Default Constructor
-User::User() : userId(0), username(""), password(""), role("") {}
+User::User() : userId(0), username(""), password(""), role("") {
+}
 
 // Parameterized Constructor
 User::User(int id, const string &uname, const string &pwd, const string &role)
-    : userId(id), username(uname), password(pwd), role(role) {}
+    : userId(id), username(uname), password(pwd), role(role) 
+{
+}
 
 // Getters
 int User::getUserId() const
@@ -60,7 +63,6 @@ void User::setRole(const string &role)
 void User::getMenu() {};
 
 
-
 // Function to check if a username or ID already exists
 bool User::checkUsernameOrIdAleadyExist(const string &username, const string &id)
 {
@@ -100,7 +102,7 @@ void User::registerUser(const string &role)
         {
             check = false;
             FileHandler::getUsers().addListNode(user);
-            FileHandler::getAllUsers().insert(user);
+            // FileHandler::getAllUsers().insert(user);
             cout << "User registered successfully!" << endl;
             _getch();
             system("cls");
@@ -250,13 +252,12 @@ void Seller::viewActiveAuctions()
 {
     // Get all active items (those that are still up for auction)
     //TODO: maket get Item function
-    AVLTree<Item> activeItems = FileHandler::getAllItems(); // Assuming a function that loads all items
+    // AVLTree<Item> activeItems = FileHandler::getAllItems(); // Assuming a function that loads all items
     
     cout << "\nActive Auctions:\n";
 
-    // Display all active items (those that are not sold and of this seller)
-    Item::displayItemsOfSeller(activeItems, this->getUserId());
-
+    items.inOrderTraversal();
+    
 }
 
 // Function to create a new auction
@@ -277,20 +278,24 @@ void Seller::createNewAuction()
     cin >> startingPrice;
 
     // Create a new item object
-    Item newItem((FileHandler::getAllItems().countNodes()+1),name , description, startingPrice, false);
+    Item newItem((FileHandler::getAllItems().countNodes()+1),this->getUserId(),name , description, startingPrice, false);
 
     // Add the item to the AVL tree
-    FileHandler::getAllItems().insert(newItem);
+    FileHandler::getAllItems().insert(newItem.getItemId(),newItem);
+    items.insert(newItem.getItemId(),newItem);
 
+    cout<<newItem;
 
     cout << "New auction created successfully.\n";
 }
+
+
 
 // // Function to view bids on seller's items
 void Seller::viewBids()
 {
     // Get all bids related to the seller's items
-    stack <Bid> bids = Bid::bidHistory;
+    // stack <Bid> bids = Bid::bidHistory;
     // Assuming a method that loads all bids
     cout << "\nBids on Your Items:\n";
 
@@ -329,6 +334,31 @@ Seller::Seller(const User &user)
     setUsername(user.getUsername());
     setPassword(user.getPassword());
     setRole(user.getRole());
+    getItemsOfUser();
+
+}
+
+
+
+void Seller::getItemsOfUser()
+{
+    AVLTree<Item> allitems = FileHandler::getAllItems();
+    getItemofUserRec(allitems.getRoot(), this->getUserId());
+
+
+}
+
+void Seller::getItemofUserRec(Node<Item> *root, int id)
+{
+    if (root != nullptr)
+    {
+        getItemofUserRec(root->left, id);
+        if (root->data.getsellerId() == id)
+        {
+            items.insert(root->key, root->data);
+        }
+        getItemofUserRec(root->right, id);
+    }
 }
 
 void Buyer::getMenu()

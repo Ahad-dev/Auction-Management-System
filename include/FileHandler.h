@@ -7,14 +7,15 @@
 #include <string>
 #include "User.h"
 #include "LinkedList.h"
-#include "AvlBst.h"
-#include "Item.h"
+// #include "AvlBst.h"
 using namespace std;
+
+class Item;
 
 class FileHandler {
 private:
     static LinkedList<User> Users;  // Static LinkedList to store users
-    static AVLTree<User> allUsers;  // Static LinkedList to store users
+    // static AVLTree<User> allUsers;  // Static LinkedList to store users
       static LinkedList<Item> Items;  // Static LinkedList to store items
       static AVLTree<Item> allItems;  // Static LinkedList to store items
 public:
@@ -22,7 +23,7 @@ public:
     static void loadUsersFromFile(const string& fileName);
     static void saveUsersToFile(const string& fileName);
     static User* authenticateUser();
-    static AVLTree<User> getAllUsers();
+    // static AVLTree<User> getAllUsers();
     static LinkedList<User> getUsers();
 
     static void loadItemsFromFile(const string& fileName);
@@ -31,6 +32,7 @@ public:
 
     // static LinkedList<Item>& getAllItems();
     static AVLTree<Item>& getAllItems();
+    static LinkedList<Item> getItems();
 };
 
 #endif

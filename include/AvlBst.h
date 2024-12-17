@@ -1,4 +1,3 @@
-
 #ifndef AVL_BST_CPP
 #define AVL_BST_CPP
 #include <iostream>
@@ -7,13 +6,14 @@ using namespace std;
 // AVL Tree Node structure (template version)
 template <typename T>
 struct Node {
-    T key;
+    int key;
+    T data;
     Node* left;
     Node* right;
     int height;
 
     // Constructor to initialize a node
-    Node(T key) : key(key), left(nullptr), right(nullptr), height(1) {}
+    Node(int key ,T data) : key(key), left(nullptr), right(nullptr), height(1), data(data) {}
 };
 
 // AVL Tree class template
@@ -63,15 +63,15 @@ private:
     }
 
     // Insert a node and balance the tree
-    Node<T>* insert(Node<T>* node, T key) {
+    Node<T>* insert(Node<T>* node, int key, T data) {
         if (node == nullptr) {
-            return new Node<T>(key);
+            return new Node<T>(key, data);
         }
 
         if (key < node->key) {
-            node->left = insert(node->left, key);
+            node->left = insert(node->left, key, data);
         } else if (key > node->key) {
-            node->right = insert(node->right, key);
+            node->right = insert(node->right, key, data);
         } else {
             return node;  // Duplicate keys are not allowed
         }
@@ -110,28 +110,26 @@ private:
     void inOrder(Node<T>* root) {
         if (root != nullptr) {
             inOrder(root->left);
-            cout << root->key << " ";
+            cout << root->data << " ";
             inOrder(root->right);
         }
     }
 
-    // count nodes
-    int countNodes(Node<T>* root){
-        if(root == nullptr){
+    // Count nodes
+    int countNodes(Node<T>* root) {
+        if (root == nullptr) {
             return 0;
         }
         return 1 + countNodes(root->left) + countNodes(root->right);
     }
-    
-    
 
 public:
     // Constructor to initialize the tree
     AVLTree() : root(nullptr) {}
 
-    // Insert a key into the AVL tree
-    void insert(T key) {
-        root = insert(root, key);
+    // Insert a key and data into the AVL tree
+    void insert(int key, T data) {
+        root = insert(root, key, data);
     }
 
     // Perform in-order traversal
@@ -140,20 +138,15 @@ public:
         cout << endl;
     }
 
-    //get root
-    Node<T>* getRoot(){
+    // Get root
+    Node<T>* getRoot() {
         return root;
     }
-    
-    //count nodes
-    int countNodes(){
+
+    // Count nodes
+    int countNodes() {
         return countNodes(root);
     }
-
-    // // Search for a key in the tree
-    // Node<T>* search(T key) {
-    //     return search(root, key);
-    // }
 };
 
 #endif

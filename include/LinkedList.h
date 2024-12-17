@@ -33,7 +33,11 @@ public:
     ListNode<T>* getHead() const;
     void addListNode(const T& data);
     void deleteListNode(const T& data);
+    int countNode(ListNode<T>* node);
+    int count();
     ListNode<T>* searchListNode(const T& data);
+    bool hasCycle();  // Check for cycle in the linked list
+    void testCycle(); // Test for cycle
 };
 
 // ListNode Constructor Definitions
@@ -126,6 +130,54 @@ ListNode<T>* LinkedList<T>::searchListNode(const T& data) {
         current = current->next;
     }
     return nullptr;  // Return nullptr if the ListNode is not found
+}
+
+// Check for cycle in the linked list
+template <class T>
+bool LinkedList<T>::hasCycle() {
+    ListNode<T>* slow = head;
+    ListNode<T>* fast = head;
+
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;          // Move slow pointer by one
+        fast = fast->next->next;    // Move fast pointer by two
+
+        if (slow == fast) {
+            return true;  // Cycle detected
+        }
+    }
+    return false;  // No cycle
+}
+
+// Test for cycle
+template <class T>
+void LinkedList<T>::testCycle() {
+    if (hasCycle()) {
+        cout << "Cycle detected in the list!" << endl;
+    } else {
+        cout << "No cycle detected in the list." << endl;
+    }
+}
+
+// Iterative countNode implementation
+template <typename T>
+int LinkedList<T>::countNode(ListNode<T>* node) {
+    int count = 0;
+    while (node != nullptr) {
+        count++;
+        node = node->next;
+    }
+    return count;
+}
+
+// Count the number of nodes in the list with safety check
+template <typename T>
+int LinkedList<T>::count() {
+    if (hasCycle()) {
+        cout << "Error: Linked list contains a cycle!" << endl;
+        return -1;  // Indicate an error due to cycle
+    }
+    return countNode(head);
 }
 
 #endif // LINKEDLIST_H

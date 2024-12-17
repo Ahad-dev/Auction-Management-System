@@ -2,50 +2,78 @@
 #define BID_H
 
 #include <iostream>
-#include <string>
-#include <stack> // For stack functionality
-#include "User.h"
-#include "Item.h"
-
+#include <stack>
 using namespace std;
 
 class Bid {
 private:
     int bidId;               // Unique identifier for the bid
     double bidAmount;        // Amount of the bid
-    User* bidder;            // The user who made the bid
-    Item* item;              // The item being bid on
-
+    int bidderId;            // The user ID who made the bid
+    int itemId;              // The item ID being bid on
 
 public:
-    static stack<Bid> bidHistory; // Stack to maintain bid history
+
     // Constructors
-    Bid();
-    Bid(int bidId, double bidAmount, User* bidder, Item* item);
+    Bid() : bidId(0), bidAmount(0.0), bidderId(0), itemId(0) {}
+    Bid(int bidId, double bidAmount, int bidderId, int itemId)
+        : bidId(bidId), bidAmount(bidAmount), bidderId(bidderId), itemId(itemId) {
+    }
 
     // Getter functions
-    int getBidId() const;
-    double getBidAmount() const;
-    User* getBidder() const;
-    Item* getItem() const;
+    int getBidId() const { return bidId; }
+    double getBidAmount() const { return bidAmount; }
+    int getBidderId() const { return bidderId; }
+    int getItemId() const { return itemId; }
 
     // Setter functions
-    void setBidId(int bidId);
-    void setBidAmount(double bidAmount);
-    void setBidder(User* bidder);
-    void setItem(Item* item);
+    void setBidId(int bidId) { this->bidId = bidId; }
+    void setBidAmount(double bidAmount) { this->bidAmount = bidAmount; }
+    void setBidderId(int bidderId) { this->bidderId = bidderId; }
+    void setItemId(int itemId) { this->itemId = itemId; }
 
-    // Function to display bid details
-    void displayBid() const;
+    // Display bid details
+    void displayBid() const {
+        cout << "Bid ID: " << bidId << "\n"
+             << "Amount: " << bidAmount << "\n"
+             << "Bidder ID: " << bidderId << "\n"
+             << "Item ID: " << itemId << "\n";
+    }
+
+    // Overload output operator <<
+    friend ostream& operator<<(ostream& os, const Bid& bid) {
+        os << "Bid ID: " << bid.bidId << "\n"
+           << "Bid Amount: " << bid.bidAmount << "\n"
+           << "Bidder ID: " << bid.bidderId << "\n"
+           << "Item ID: " << bid.itemId << "\n";
+        return os;
+    }
+
+    // Overload input operator >>
+    friend istream& operator>>(istream& is, Bid& bid) {
+        cout << "Enter Bid ID: ";
+        is >> bid.bidId;
+        cout << "Enter Bid Amount: ";
+        is >> bid.bidAmount;
+        cout << "Enter Bidder ID: ";
+        is >> bid.bidderId;
+        cout << "Enter Item ID: ";
+        is >> bid.itemId;
+
+        // Automatically push to history
+        return is;
+    }
 
     // Static methods for bid history
-    static void pushToHistory(const Bid& bid);
-    static Bid popFromHistory();
-    static void displayHistory();
-
-    // Overload the input and output operators
-    friend ostream& operator<<(ostream& os, const Bid& bid);
-    friend istream& operator>>(istream& is, Bid& bid);
+    // static void displayHistory() {
+    //     stack<Bid> tempStack = FileHandler::getBidHistoryForItem(); // Copy the stack
+    //     cout << "\n===== Bid History =====\n";
+    //     while (!tempStack.empty()) {
+    //         cout << tempStack.top();
+    //         cout << "-------------------------\n";
+    //         tempStack.pop();
+    //     }
+    // }
 };
 
 #endif

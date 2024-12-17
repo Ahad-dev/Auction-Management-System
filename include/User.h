@@ -92,6 +92,15 @@ public:
     //copy constructor
     Buyer(const User& user);
     void getMenu() override;
+
+
+    //Utitiles Functions
+    void viewAllItems();
+    void searchItem();
+    void placeBid();
+    void viewBiddingHistory();
+    void getListedItemRec(Node<Item> * );
+
 };
 
 class Admin: public User {
@@ -99,6 +108,46 @@ public:
     //copy constructor
     Admin(const User& user);
     void getMenu() override;
+    void manageUserMenu();
+
+      // Manage User Menu
+
+    // View All Users
+    void viewAllUsers();
+
+    // Add New User
+    void addNewUser();
+
+    // Edit User Detail
+
+    // Delete User
+    void deleteUser();
+
+    // View User Bidding History
+    void viewUserBiddingHistory();
+
+    // Manage Items Menu
+    void manageItemMenu();
+
+    // View All Items
+    void viewAllItems();
+
+    // Add New Item
+    void addNewItem();
+
+    
+
+
+    // Delete Item
+    void deleteItem();
+
+    // View Item Bidding History
+    void viewItemBiddingHistory();
+
+    void startAuction();
+
+
+
 };
 
 #endif // USER_H

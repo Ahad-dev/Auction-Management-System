@@ -7,13 +7,13 @@ using namespace std;
 template <typename T>
 struct Node {
     int key;
+    string name;
     T data;
     Node* left;
     Node* right;
     int height;
 
-    // Constructor to initialize a node
-    Node(int key ,T data) : key(key), left(nullptr), right(nullptr), height(1), data(data) {}
+    Node(int key, T data, string name = "") : key(key), left(nullptr), right(nullptr), height(1), data(data), name(name) {}
 };
 
 // AVL Tree class template
@@ -22,19 +22,16 @@ class AVLTree {
 private:
     Node<T>* root;
 
-    // Get height of a node
     int height(Node<T>* node) {
         if (node == nullptr) return 0;
         return node->height;
     }
 
-    // Get balance factor of node
     int getBalance(Node<T>* node) {
         if (node == nullptr) return 0;
         return height(node->left) - height(node->right);
     }
 
-    // Right rotate subtree rooted with y
     Node<T>* rightRotate(Node<T>* y) {
         Node<T>* x = y->left;
         Node<T>* T2 = x->right;
@@ -48,7 +45,6 @@ private:
         return x;
     }
 
-    // Left rotate subtree rooted with x
     Node<T>* leftRotate(Node<T>* x) {
         Node<T>* y = x->right;
         Node<T>* T2 = y->left;
@@ -62,42 +58,28 @@ private:
         return y;
     }
 
-    // Insert a node and balance the tree
-    Node<T>* insert(Node<T>* node, int key, T data) {
+    Node<T>* insert(Node<T>* node, int key, T data, string name = "") {
         if (node == nullptr) {
-            return new Node<T>(key, data);
+            return new Node<T>(key, data, name);
         }
 
         if (key < node->key) {
-            node->left = insert(node->left, key, data);
+            node->left = insert(node->left, key, data, name);
         } else if (key > node->key) {
-            node->right = insert(node->right, key, data);
+            node->right = insert(node->right, key, data, name);
         } else {
-            return node;  // Duplicate keys are not allowed
+            return node;
         }
 
         node->height = max(height(node->left), height(node->right)) + 1;
-
-        // Get balance factor
         int balance = getBalance(node);
 
-        // Left heavy tree
-        if (balance > 1 && key < node->left->key) {
-            return rightRotate(node);
-        }
-
-        // Right heavy tree
-        if (balance < -1 && key > node->right->key) {
-            return leftRotate(node);
-        }
-
-        // Left-right case
+        if (balance > 1 && key < node->left->key) return rightRotate(node);
+        if (balance < -1 && key > node->right->key) return leftRotate(node);
         if (balance > 1 && key > node->left->key) {
             node->left = leftRotate(node->left);
             return rightRotate(node);
         }
-
-        // Right-left case
         if (balance < -1 && key < node->right->key) {
             node->right = rightRotate(node->right);
             return leftRotate(node);
@@ -106,46 +88,105 @@ private:
         return node;
     }
 
-    // In-order traversal of the AVL tree
     void inOrder(Node<T>* root) {
-        if (root != nullptr) {
+        if (root) {
             inOrder(root->left);
             cout << root->data << " ";
             inOrder(root->right);
         }
     }
 
-    // Count nodes
     int countNodes(Node<T>* root) {
-        if (root == nullptr) {
-            return 0;
-        }
+        if (!root) return 0;
         return 1 + countNodes(root->left) + countNodes(root->right);
     }
 
-public:
-    // Constructor to initialize the tree
-    AVLTree() : root(nullptr) {}
-
-    // Insert a key and data into the AVL tree
-    void insert(int key, T data) {
-        root = insert(root, key, data);
+    Node<T>* searchByKey(Node<T>* root, int key) {
+        while (root) {
+            if (key == root->key) return root;
+            root = (key < root->key) ? root->left : root->right;
+        }
+        return nullptr;
     }
 
-    // Perform in-order traversal
+    Node<T>* searchByUsername(Node<T>* root, string name) {
+        if (!root) return nullptr;
+        if (root->name == name) return root;
+
+        Node<T>* leftResult = searchByUsername(root->left, name);
+        if (leftResult) return leftResult;
+
+        return searchByUsername(root->right, name);
+    }
+
+    Node<T>* getMinValueNode(Node<T>* root) {
+        while (root && root->left) root = root->left;
+        return root;
+    }
+
+    Node<T>* Delete(Node<T>* root, int key) {
+        if (!root) return root;
+
+        if (key < root->key) root->left = Delete(root->left, key);
+        else if (key > root->key) root->right = Delete(root->right, key);
+        else {
+            if (!root->left || !root->right) {
+                Node<T>* temp = root->left ? root->left : root->right;
+                delete root;
+                return temp;
+            } else {
+                Node<T>* temp = getMinValueNode(root->right);
+                root->key = temp->key;
+                root->right = Delete(root->right, temp->key);
+            }
+        }
+
+        root->height = 1 + max(height(root->left), height(root->right));
+        int balance = getBalance(root);
+
+        if (balance > 1 && getBalance(root->left) >= 0) return rightRotate(root);
+        if (balance > 1 && getBalance(root->left) < 0) {
+            root->left = leftRotate(root->left);
+            return rightRotate(root);
+        }
+        if (balance < -1 && getBalance(root->right) <= 0) return leftRotate(root);
+        if (balance < -1 && getBalance(root->right) > 0) {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+
+        return root;
+    }
+
+public:
+    AVLTree() : root(nullptr) {}
+
+    void insert(int key, T data, string name = "") {
+        root = insert(root, key, data, name);
+    }
+
     void inOrderTraversal() {
         inOrder(root);
         cout << endl;
     }
 
-    // Get root
-    Node<T>* getRoot() {
-        return root;
-    }
-
-    // Count nodes
     int countNodes() {
         return countNodes(root);
+    }
+
+    Node<T>* SearchNode(int key) {
+        return searchByKey(root, key);
+    }
+
+    Node<T>* searchByUsername(string name) {
+        return searchByUsername(root, name);
+    }
+
+    void Delete(int key) {
+        root = Delete(root, key);
+    }
+    Node<T>* getRoot(){
+        return root;
     }
 };
 

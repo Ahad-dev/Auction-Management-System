@@ -1,2 +1,2 @@
-2 8 daf fads 334 0
-3 8 Aja adf 34 0
+2 8 daf fads 334 0 1
+3 8 Aja adf 34 0 1
